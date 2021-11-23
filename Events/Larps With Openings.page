@@ -1,0 +1,5 @@
+<section class="my-4">
+  <h3 class="my-h3 mb-3">There's still openings in all these great games!</h3>
+  
+  {% include "run_availability_grid" %}
+</section>

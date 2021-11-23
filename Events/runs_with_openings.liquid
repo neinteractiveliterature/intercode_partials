@@ -1,0 +1,29 @@
+{% assign run_availabilities = convention.run_availabilities_with_counted_slots %}
+{% assign larp_availability = run_availabilities | where: "event_category_name", "Larp" | sort: "starts_at" %}
+{% assign npc_availabilities = convention.run_availabilities_with_not_counted_slots %}
+{% assign npclarp_availability = npc_availabilities | where: "event_category_name", "Larp" | sort: "starts_at" %}
+
+
+{% if larp_availability.size > 0 || npclarp_availability.size > 0 %}
+  <section class="my-4">
+    <h4 class="my-h4">There's still openings in all these great games!</h4>
+    {% if larp_availability.size > 0 %}
+      <h5>Player Character Signups</h5>
+      <ul>
+        {% for availability in larp_availability %}
+          <li><a href="{{ availability.run.event.url }}">{{ availability.run.event.title }}</a>: {{ availability.run.starts_at | date: "%a %l:%M%P" }} - {{ availability.bucket_availabilities_with_counted_slots | map: "bucket" | map: "name" | to_sentence }}</li>
+        {% endfor %}
+      </ul>
+    {% endif %}
+
+    {% if npclarp_availability.size > 0 %}
+      <h5>NPC or Unlimited Signups</h5>
+      <ul>
+        {% for availability in npclarp_availability %}
+          <li><a href="{{ availability.run.event.url }}">{{ availability.run.event.title }}</a>: {{ availability.run.starts_at | date: "%a %l:%M%P" }} - {{ availability.bucket_availabilities_with_not_counted_slots | map: "bucket" | map: "name" | to_sentence }}</li>
+        {% endfor %}
+      </ul>
+    {% endif %}
+
+  </section>
+{% endif %}
