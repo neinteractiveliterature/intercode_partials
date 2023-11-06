@@ -1,29 +1,13 @@
-{%assign_graphql_result result=getMeetups()%}
-{%assign meetups =  result.convention.events_paginated.entries %}
+{% assign_graphql_result result = getMeetups()  %}
+{% assign meetups =  result.convention.events_paginated.entries %}
 <h3 class="my-h4">Meetups and Parties at {{convention.name}}</h3>
-<ul>
+<div class=list-group>
 {% for meetup in meetups %}
   {% assign hosts = '' | split: ' ' %}
   {% for host in meetup.team_members %}
-    {% assign name = host.user_con_profile.name_without_nickname| split: '_' %}
+    {% assign name = host.user_con_profile.name_without_nickname | split: '_' %}
     {% assign hosts = hosts | concat: name %}
   {% endfor %}
-  
-  {% assign runs = "" |split: ", " %}
-  {% for run in meetup.runs %}
-      {% assign starts_at = run.starts_at | date: "%a %l:%M%P" %}
-      {% assign rooms = run.rooms |map: 'name'|join: ', ' %}
-      {% assign runText = starts_at | append: ' in ' |append: rooms %}
-      {% assign runlist = runText|split: ", " %}
-      {% assign runs = runs | concat: runlist %}
-  
-    {% endfor %}
-  
-  <li>
-    {{meetup.event_category.name | replace: "_", " " | humanize}}:&nbsp;
-    <a href='/events/{{meetup.id}}'>{{meetup.title}}</a>
-    {{meetup.event_category.team_member_name|humanize}}(s): {{hosts |join: ', '}}  - 
-    {{runs | join: ', '}}
-  </li>
-  {% endfor %}
-</ul>
+  {% render 'event_list_entry', event:meetup, hosts:hosts %}
+{% endfor %}
+</div>
