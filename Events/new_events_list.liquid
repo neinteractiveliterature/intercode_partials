@@ -1,30 +1,24 @@
 {% assign events = convention.events_created_since[convention.maximum_event_signups.current_value_change] | sort: "created_at" | reverse %}
 {% if events.size > 0 %}
   {% capture newgames_content %}
-      {% for event in events %}
-        {% if event.runs.size == 0 %}
-          {% continue %}
-        {% endif %}
-        <li>{{event.event_category.name | replace: "_", " " | humanize}}:&nbsp;
-          <a href="{{ event.url }}">{{ event.title }}</a> run by
-          {{event.team_member_user_con_profiles |map: 'name_without_nickname' |join: ', '}} - 
-          {% assign runs = "" |split: ", " %}
-          {% for run in event.runs %}
-            {% assign runlist = run.starts_at | date: "%a %l:%M%P"|split: ", " %}
-            {% assign runs = runs | concat: runlist %}
-          {% endfor %}
-          {{runs | join: ', '}}
-        </li>
-      {% endfor %}
+    {% for event in events %}
+      {% if event.runs.size == 0 %}
+        {% continue %}
+      {% endif %}
+      {% assign hosts = event.team_member_user_con_profiles |map: 'name_without_nickname' %}
+      {% render 'event_list_entry', event:event, hosts:hosts %}
+    {% endfor %}
   {% endcapture %}
 
   {% assign newgames_content_stripped = (newgames_content | strip) %}
     {% if newgames_content_stripped != '' %}
-      <section class="my-4">
       <h3 class="my-h4">New Events added to the Schedule</h3>
-      <ul>
+      <div class='list-group'>
         {{ newgames_content_stripped }}
-      </ul>
-      </section>
+      </div>
+  {% else %}
+      <p> No new events have been scheduled yet, stay tuned!</p>    
   {% endif %}
+{% else %}
+  <p> No new events have been added yet, stay tuned!</p>    
 {% endif %}
